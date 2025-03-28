@@ -1,0 +1,73 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <!-- ตัวอย่างเมนู Navbar (อาจดัดแปลงจาก index.html) -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="brand">หน้าหลัก</a>
+      <span style="margin-left: 20px; font-weight: bold;">ADMIN PANEL</span>
+
+      {% if user_logged_in %}
+      <div class="profile-wrapper">
+        <div class="profile-btn">
+          <div class="avatar-circle" style="background-color: {{ avatar_color }}">
+            {{ first_letter }}
+          </div>
+          <span class="student-id">{{ student_id }}</span>
+          <i class="fa-solid fa-chevron-down arrow"></i>
+        </div>
+        <div class="dropdown-menu">
+          <a href="{{ url_for('profile') }}"><i class="fa-solid fa-user"></i> Profile</a>
+          <a href="{{ url_for('logout') }}"><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
+        </div>
+      </div>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="login-btn">เข้าสู่ระบบ</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>รายการโปรเจกต์ทั้งหมด</h1>
+    <table border="1" cellpadding="8" style="border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title (TH)</th>
+          <th>Author</th>
+          <th>Year</th>
+          <th>Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in projects %}
+        <tr>
+          <td>{{ p.id }}</td>
+          <td>{{ p.title_th }}</td>
+          <td>{{ p.author }}</td>
+          <td>{{ p.academic_year }}</td>
+          <td>
+            <!-- ปุ่มแก้ไข -->
+            <a href="{{ url_for('edit_project', project_id=p.id) }}">Edit</a>
+
+            <!-- ปุ่มลบ (POST) -->
+            <form action="{{ url_for('admin_delete_project', project_id=p.id) }}" method="POST" style="display:inline;">
+              <button type="submit" onclick="return confirm('ยืนยันการลบโปรเจกต์ #{{ p.id }} ?');">
+                Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
